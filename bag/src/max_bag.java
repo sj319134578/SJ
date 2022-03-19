@@ -68,12 +68,7 @@ public class max_bag {
             System.out.print(x[i]+" ");
         }
         System.out.println();
-        for(int i=0;i<v.length;i++){
-            for(int j=0;j<c+1;j++){
-                System.out.print(m[i][j]+"\t");
-            }
-            System.out.println();
-        }
+       
         System.out.println("动态规划算法：");
         traceback(m,w,c,x);
 
