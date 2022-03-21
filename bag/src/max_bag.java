@@ -17,6 +17,8 @@ public class max_bag {
     static int c;           // 描述背包容量
     static int[] v;     // 描述物品价值
     static int[] w;    // 描述物品重量
+    static int[] w1;
+    static int[] v1 ;
     static int curWeight = 0;
     static int curValue = 0;
     static int bestValue = 0;
@@ -26,19 +28,43 @@ public class max_bag {
 
     public static void main(String[] args) throws IOException {
 
+        Scanner input = new Scanner(System.in);
+        File  file = null;
         //1. 读取文件与处理数据部分
         try {
             // 读取文件
-            File file = new File("d:/testdata/beibao0.in");
-            InputStreamReader input = new InputStreamReader(new FileInputStream(file));
-            BufferedReader bf = new BufferedReader(input);
+            System.out.println("请输入要选择的背包数据(0~9)");
+            int select = input.nextInt();
+            if (select==0) 
+                  file = new File("../bag/data/beibao0.in");
+            else if(select==1)
+                    file = new File("../bag/data/beibao1.in");
+            else if(select==2)
+                    file = new File("../bag/data/beibao2.in");
+            else if(select==3)
+                    file = new File("../bag/data/beibao3.in");
+            else if(select==4)
+                    file = new File("../bag/data/beibao4.in");
+            else if(select==5)
+                    file = new File("../bag/data/beibao5.in");
+            else if(select==6)
+                    file = new File("../bag/data/beibao6.in");
+            else if(select==7)
+                    file = new File("../bag/data/beibao7.in");
+            else if(select==8)
+                    file = new File("../bag/data/beibao8.in");
+            else if(select==9)
+                    file = new File("../bag/data/beibao9.in");
+                
+            InputStreamReader in1 = new InputStreamReader(new FileInputStream(file));
+            BufferedReader bf = new BufferedReader(in1);
             // 按行读取字符串
             String str;
             while ((str = bf.readLine()) != null) {
                 arrayList.add(str);
             }
             bf.close();
-            input.close();
+            in1.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,14 +95,19 @@ public class max_bag {
         System.out.println("背包容量："+c +" 物品数量："+n);
         v = new int[length];
         w = new int[length];
-        double q;
-        for (int i = 1; i < length; i++) {
-            v[i] = array[i][1];     //价值赋值
-            w[i] = array[i][0];
-            q= (double)v[i]/w[i];
-            System.out.println("价值："+ v[i]+" 重量："+w[i] + " 性价比" + q);
+        w1 = new int[length];
+        v1 = new int[length];
+        for (int i = 1; i <= n; i++) {
+            v[i-1] = array[i][1];     //价值赋值
+            w[i-1] = array[i][0];
+
+            System.out.println("价值："+ v[i-1]+" 重量："+w[i-1] );
             //System.out.println(v[i]+" ");
         }
+        System.out.println("进行非递增排序后的数据：");
+        sort(); //排序
+
+
 
         int[][] m = new int[v.length][c + 1];//定义m二维数组用来表示所有的价值,m[i][j]表示第i物品装入后，容量为j的背包的最大值
         int[] x = new int[w.length];    //解空间集
@@ -97,8 +128,8 @@ public class max_bag {
         int flag0 = 1;
         while (flag0 == 1){
             System.out.println("请输入要使用的算法：0.退出    1.动态规划法    2.贪心算法    3.回溯算法\n");
-            Scanner input = new Scanner(System.in);
-            int in=input.nextInt();
+            Scanner input2 = new Scanner(System.in);
+            int in=input2.nextInt();
             if(in == 1) {
                 System.out.println("动态规划算法：");
                 long startTime = System.nanoTime(); //获取开始时间
@@ -187,16 +218,13 @@ public class max_bag {
 
     }
 
-
-    // 函数3：贪心算法
-    public static int knapsackGreedy(int capacity, int weights[], int values[]) {
-        int n = weights.length;   //物品的数量
-
+    //排序算法
+    public static void sort(){
         Double[] r = new Double[n];  //保存性价比的数组
         int[] index = new int[n]; //保存按性价比排序的物品的下标
         //计算得到各个物品的性价比
         for (int i = 0; i < n; i++) {
-            r[i] = (double) values[i] / weights[i];
+            r[i] = (double) v[i] / w[i];
             index[i] = i;  //初始化各个物品的默认性价比排序
         }
 
@@ -207,7 +235,6 @@ public class max_bag {
                     double temp = r[i];
                     r[i] = r[j];
                     r[j] = temp;
-
                     //将排序后性价比的下标更新为性价比排序后的位置
                     int x = index[i];
                     index[i] = index[j];
@@ -216,17 +243,23 @@ public class max_bag {
             }
         }
 
-        //将排序好的重量和价值分别保存到数组
-        int[] w1 = new int[n];
-        int[] v1 = new int[n];
+        //将排序好的重量和价值分别保存到数
         for (int i = 0; i < n; i++) {
-            w1[i] = weights[index[i]];
-            v1[i] = values[index[i]];
+            w1[i] = w[index[i]];
+            v1[i] = v[index[i]];
+            System.out.println("价值："+ v1[i]+" 重量："+w1[i] + " 性价比" + r[i]);
         }
+
+    }
+
+
+
+    // 函数3：贪心算法
+    public static int knapsackGreedy(int capacity, int weights[], int values[]) {
 
         //将物品装入背包
         //记录哪些物品已经被装入背包       0 没有装入背包    1 代表已经装入背包
-        int[] x = new int[n-1];
+        int[] x = new int[n];
         int maxValue = 0;
         for (int i = 1; i < n; i++) {
             if (w1[i] <= capacity) {
