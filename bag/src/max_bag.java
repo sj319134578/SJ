@@ -3,6 +3,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -171,6 +172,8 @@ public class max_bag {
                 flag0 = 0;
             }
         }
+        getConnection();
+
 
     }
 
@@ -315,5 +318,97 @@ public class max_bag {
          return bestValue;
 
     }
+
+    public static Connection getConnection() {
+        Statement stmt;
+        ResultSet rs;
+        Connection con = null;
+        PreparedStatement ps = null ;
+        try {
+            System.out.println("begin connection...");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            con = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=bag","sj","root");
+            // 建立Statement对象
+            stmt = con.createStatement();
+            /**
+             * Statement createStatement() 创建一个 Statement 对象来将 SQL 语句发送到数据库。
+             */
+            //每次执行插入语句前先删除之前存入的数据
+            String sql="delete  from data ";
+            //执行SQL删除语句
+            stmt.executeUpdate(sql);
+            System.out.println("已删除之前的数据!\n\n");
+
+
+            //将背包数据插入数据库
+            System.out.println("开始插入背包数据...");
+            int t=0;
+            for(int i=0; i<n; i++)
+            {
+                sql = "insert into data(weight,value) values (?,?)";
+                ps = con.prepareStatement(sql);
+                ps.setInt(1, w[i]);
+                ps.setInt(2, v[i]);
+                // 执行数据库插入语句
+                ps.executeUpdate() ;
+                //stmt.executeUpdate(sql);
+                t++;
+            }
+            System.out.println("成功插入"+t+"条记录！");
+
+
+            //查询数据库中插入的记录
+            System.out.println("查询记录如下：");
+            sql = "select * from data" ;
+            /**
+             * ResultSet executeQuery(String sql) throws SQLException 执行给定的 SQL
+             * 语句，该语句返回单个 ResultSet 对象
+             */
+            rs = stmt.executeQuery(sql) ;
+            int w1,v1;
+            while(rs.next())
+            {
+                w1 = rs.getInt(1);
+                v1 = rs.getInt(2);
+                System.out.println("重量" + w1 +" 价值" + v1);
+            }
+            System.out.println("end.");
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        return con;
+    }
+
+    // 关闭资源连接connection,statement,resultset
+    public static void closeAll(ResultSet resultSet, Statement statement, Connection connection) {
+        if(resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if(connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 
 }
