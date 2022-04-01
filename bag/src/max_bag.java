@@ -7,9 +7,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.*;
+
+import static java.lang.System.out;
+
 /**
 
  */
@@ -34,7 +39,7 @@ public class max_bag {
         //1. 读取文件与处理数据部分
         try {
             // 读取文件
-            System.out.println("请输入要选择的背包数据(0~9)");
+            out.println("请输入要选择的背包数据(0~9)");
             int select = input.nextInt();
             if (select==0) 
                   file = new File("../bag/data/beibao0.in");
@@ -93,7 +98,7 @@ public class max_bag {
             file2.createNewFile();
         }
         FileWriter f1 = new FileWriter(file2.getName(),true);
-        System.out.println("背包容量："+c +" 物品数量："+n);
+        out.println("背包容量："+c +" 物品数量："+n);
         v = new int[length];
         w = new int[length];
         w1 = new int[length];
@@ -102,10 +107,10 @@ public class max_bag {
             v[i-1] = array[i][1];     //价值赋值
             w[i-1] = array[i][0];
 
-            System.out.println("价值："+ v[i-1]+" 重量："+w[i-1] );
+            out.println("价值："+ v[i-1]+" 重量："+w[i-1] );
             //System.out.println(v[i]+" ");
         }
-        System.out.println("进行非递增排序后的数据：");
+        out.println("进行非递增排序后的数据：");
         sort(); //排序
 
 
@@ -126,54 +131,64 @@ public class max_bag {
 
 
         // 5. 主要算法部分
-        int flag0 = 1;
-        while (flag0 == 1){
-            System.out.println("请输入要使用的算法：0.退出    1.动态规划法    2.贪心算法    3.回溯算法\n");
-            Scanner input2 = new Scanner(System.in);
-            int in=input2.nextInt();
-            if(in == 1) {
-                System.out.println("动态规划算法：");
-                long startTime = System.nanoTime(); //获取开始时间
-                Knapsack(v, w, c, m);
-                traceback(m, w, c, x);
-                System.out.println("可装入背包的物品的最大价值：" + m[0][c]);
-                long endTime = System.nanoTime();//获取结束时间
-                long allTime = (endTime - startTime);
-                System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
-                f1.write("可装入背包的物品的最大价值：" +m[0][c]+"\n");
-                f1.write("程序运行时间：" + allTime+"ns\n");
-
-
+        try{
+            PrintStream mytxt=new PrintStream("./log.txt");
+            PrintStream out=System.out;
+            System.setOut(mytxt);
+            System.out.println("文档执行的日期是："+new Date());
+            int flag0 = 1;
+            while (flag0 == 1){
+                out.println("请输入要使用的算法：0.退出    1.动态规划法    2.贪心算法    3.回溯算法\n");
+                Scanner input2 = new Scanner(System.in);
+                int in=input2.nextInt();
+                if(in == 1) {
+                    System.out.println("动态规划算法：");
+                    long startTime = System.nanoTime(); //获取开始时间
+                    Knapsack(v, w, c, m);
+                    traceback(m, w, c, x);
+                    System.out.println("可装入背包的物品的最大价值：" + m[0][c]);
+                    long endTime = System.nanoTime();//获取结束时间
+                    long allTime = (endTime - startTime);
+                    System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
+                    f1.write("可装入背包的物品的最大价值：" +m[0][c]+"\n");
+                    f1.write("程序运行时间：" + allTime+"ns\n");
+                }
+                else if(in == 2) {
+                    System.out.println("贪心算法：");
+                    long startTime = System.nanoTime(); //获取开始时间
+                    int max = knapsackGreedy(c, w, v);
+                    System.out.println("可装入背包的物品的最大价值：" + max);
+                    long endTime = System.nanoTime();//获取结束时间
+                    long allTime = (endTime - startTime);
+                    System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
+                    f1.write("可装入背包的物品的最大价值：" +max+"\n");
+                    f1.write("程序运行时间：" + allTime+"ns\n");
+                }
+                else if(in == 3) {
+                    System.out.println("回溯算法：");
+                    long startTime = System.nanoTime(); //获取开始时间
+                    int max = maxValue(0);
+                    System.out.println("可装入背包的物品的最大价值：" + max);
+                    long endTime = System.nanoTime();//获取结束时间
+                    long allTime = (endTime - startTime);
+                    System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
+                    f1.write("可装入背包的物品的最大价值：" +max+"\n");
+                    f1.write("程序运行时间：" + allTime+"ns\n");
+                }
+                else {
+                    f1.close();
+                    flag0 = 0;
+                }
             }
-            else if(in == 2) {
-                System.out.println("贪心算法：");
-                long startTime = System.nanoTime(); //获取开始时间
-                int max = knapsackGreedy(c, w, v);
-                System.out.println("可装入背包的物品的最大价值：" + max);
-                long endTime = System.nanoTime();//获取结束时间
-                long allTime = (endTime - startTime);
-                System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
-                f1.write("可装入背包的物品的最大价值：" +max+"\n");
-                f1.write("程序运行时间：" + allTime+"ns\n");
-            }
-            else if(in == 3) {
-                System.out.println("回溯算法：");
-                long startTime = System.nanoTime(); //获取开始时间
-                int max = maxValue(0);
-                System.out.println("可装入背包的物品的最大价值：" + max);
-                long endTime = System.nanoTime();//获取结束时间
-                long allTime = (endTime - startTime);
-                System.out.println("程序运行时间：" + allTime + "ns"); //输出程序运行时间
-                f1.write("可装入背包的物品的最大价值：" +max+"\n");
-                f1.write("程序运行时间：" + allTime+"ns\n");
-            }
-            else {
-                f1.close();
-                flag0 = 0;
-            }
+            // 记录输入输出的记录
+            System.setOut(out);
+            mytxt.close();
+            System.out.println("日期保存完毕(算法结果已保存至log文件）");
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
         }
+        //6. 建立数据库连接
         getConnection();
-
 
     }
 
@@ -189,11 +204,11 @@ public class max_bag {
             }
         }
         x[n] = (m[n][c] > 0) ? 1 : 0;
-        System.out.print("解向量：");
+        out.print("解向量：");
         for (int i = 1; i < x.length; i++) {
-            System.out.print(x[i] + " ");
+            out.print(x[i] + " ");
         }
-        System.out.println();
+        out.println();
         /*for (int i = 0; i < v.length; i++) {
             for (int j = 0; j < c + 1; j++) {
                 System.out.print(m[i][j] + "\t");
@@ -221,41 +236,6 @@ public class max_bag {
 
     }
 
-    //排序算法
-    public static void sort(){
-        Double[] r = new Double[n];  //保存性价比的数组
-        int[] index = new int[n]; //保存按性价比排序的物品的下标
-        //计算得到各个物品的性价比
-        for (int i = 0; i < n; i++) {
-            r[i] = (double) v[i] / w[i];
-            index[i] = i;  //初始化各个物品的默认性价比排序
-        }
-
-        //对各个物品的性价比进行排序
-        for (int i = 0; i < r.length - 1; i++) {
-            for (int j = i + 1; j < r.length; j++) {
-                if (r[i] < r[j]) {
-                    double temp = r[i];
-                    r[i] = r[j];
-                    r[j] = temp;
-                    //将排序后性价比的下标更新为性价比排序后的位置
-                    int x = index[i];
-                    index[i] = index[j];
-                    index[j] = x;
-                }
-            }
-        }
-
-        //将排序好的重量和价值分别保存到数
-        for (int i = 0; i < n; i++) {
-            w1[i] = w[index[i]];
-            v1[i] = v[index[i]];
-            System.out.println("价值："+ v1[i]+" 重量："+w1[i] + " 性价比" + r[i]);
-        }
-
-    }
-
-
 
     // 函数3：贪心算法
     public static int knapsackGreedy(int capacity, int weights[], int values[]) {
@@ -273,7 +253,7 @@ public class max_bag {
                 capacity -= w1[i];
             }
         }
-        System.out.println("解向量为：" + Arrays.toString(x));
+        out.println("解向量为：" + Arrays.toString(x));
         return maxValue;
     }
 
@@ -319,13 +299,48 @@ public class max_bag {
 
     }
 
+    //函数5：排序算法
+    public static void sort(){
+        Double[] r = new Double[n];  //保存性价比的数组
+        int[] index = new int[n]; //保存按性价比排序的物品的下标
+        //计算得到各个物品的性价比
+        for (int i = 0; i < n; i++) {
+            r[i] = (double) v[i] / w[i];
+            index[i] = i;  //初始化各个物品的默认性价比排序
+        }
+
+        //对各个物品的性价比进行排序
+        for (int i = 0; i < r.length - 1; i++) {
+            for (int j = i + 1; j < r.length; j++) {
+                if (r[i] < r[j]) {
+                    double temp = r[i];
+                    r[i] = r[j];
+                    r[j] = temp;
+                    //将排序后性价比的下标更新为性价比排序后的位置
+                    int x = index[i];
+                    index[i] = index[j];
+                    index[j] = x;
+                }
+            }
+        }
+
+        //将排序好的重量和价值分别保存到数
+        for (int i = 0; i < n; i++) {
+            w1[i] = w[index[i]];
+            v1[i] = v[index[i]];
+            out.println("价值："+ v1[i]+" 重量："+w1[i] + " 性价比" + r[i]);
+        }
+
+    }
+
+    //函数6：建立数据库连接
     public static Connection getConnection() {
         Statement stmt;
         ResultSet rs;
         Connection con = null;
         PreparedStatement ps = null ;
         try {
-            System.out.println("begin connection...");
+            out.println("begin connection...");
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             con = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;DatabaseName=bag","sj","root");
             // 建立Statement对象
@@ -337,11 +352,11 @@ public class max_bag {
             String sql="delete  from data ";
             //执行SQL删除语句
             stmt.executeUpdate(sql);
-            System.out.println("已删除之前的数据!\n\n");
+            out.println("已删除之前的数据!\n\n");
 
 
             //将背包数据插入数据库
-            System.out.println("开始插入背包数据...");
+            out.println("开始插入背包数据...");
             int t=0;
             for(int i=0; i<n; i++)
             {
@@ -354,11 +369,11 @@ public class max_bag {
                 //stmt.executeUpdate(sql);
                 t++;
             }
-            System.out.println("成功插入"+t+"条记录！");
+            out.println("成功插入"+t+"条记录！");
 
 
             //查询数据库中插入的记录
-            System.out.println("查询记录如下：");
+            out.println("查询记录如下：");
             sql = "select * from data" ;
             /**
              * ResultSet executeQuery(String sql) throws SQLException 执行给定的 SQL
@@ -370,17 +385,17 @@ public class max_bag {
             {
                 w1 = rs.getInt(1);
                 v1 = rs.getInt(2);
-                System.out.println("重量" + w1 +" 价值" + v1);
+                out.println("重量" + w1 +" 价值" + v1);
             }
-            System.out.println("end.");
+            out.println("end.");
         }
         catch (Exception e) {
-            System.out.println(e);
+            out.println(e);
         }
         return con;
     }
 
-    // 关闭资源连接connection,statement,resultset
+    // 函数7：关闭资源连接connection,statement,resultset
     public static void closeAll(ResultSet resultSet, Statement statement, Connection connection) {
         if(resultSet != null) {
             try {
