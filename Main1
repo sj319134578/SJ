@@ -1,0 +1,114 @@
+package bag;
+	import java.awt.BorderLayout;
+	import java.awt.Dimension;
+	import java.awt.GridLayout;
+	import java.awt.event.ActionEvent;
+	import java.awt.event.ActionListener;
+	import java.util.ArrayList;
+	import javax.swing.JButton;
+	import javax.swing.JDialog;
+	import javax.swing.JFrame;
+	import javax.swing.JLabel;
+	import javax.swing.JPanel;
+    import javax.swing.JTextArea;
+    import javax.swing.JTextField;
+	public class Main1 {
+		public static void main(String[] args){
+			ArrayList<GradeFrame> GradeFrame = new ArrayList<GradeFrame>();
+			
+			int arr[] = {1,1,1,1,1,1,1,1,1,1};
+			JPanel p = new JPanel();
+			p.setPreferredSize(new Dimension(200, 180));
+	    	JFrame f = new JFrame("0/1背包管理系统");
+	        f.setSize(400, 300);
+	        JButton b1 = new JButton("输入题目要求");
+	        JButton b2 = new JButton("输出实验结果");
+	        JButton b3 = new JButton("输出散点图");
+	        b1.addActionListener(new ActionListener(){
+				//单击输入执行的方法
+				public  void actionPerformed(ActionEvent e) {
+					JPanel jp12=new JPanel();  
+					JPanel jp13=new JPanel();  
+					JTextField jt11=new JTextField(10);
+					JTextField jt12=new JTextField(10);
+					JDialog jd = new JDialog();
+					jd.setLayout(new GridLayout(10, 1));
+					jd.setTitle("请输入");
+					jd.setSize(400, 850);					
+					jp13.add(new JLabel("所使用的算法"));
+					jp13.add(jt12);					
+					jd.add(jp12);
+					jd.add(jp13);					
+					JPanel jp1=new JPanel();  
+					JPanel jp11=new JPanel();
+					JButton jb1,jb2;
+					JTextField jt1=new JTextField(10);
+					jb1=new JButton("确定");  
+			        jb2=new JButton("取消");
+			        
+			        jb2.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent e) {
+							jd.dispose();
+						}
+			        });
+					jp1.add(new JLabel("背包数据数"));
+					jp1.add(jt1);					
+					jp11.add(jb1);
+					jp11.add(jb2);
+					jd.add(jp1);
+					jd.add(jp11);
+			        jb1.addActionListener(new ActionListener(){
+						public void actionPerformed(ActionEvent e) {
+							String num;
+							for(int i=0;i<10;i++) {
+								if(i==0) {
+									num = jt1.getText();
+									int x = Integer.parseInt(num);
+									arr[i]= x;
+								}
+							}
+						}
+			        });			        
+					jd.setLocationRelativeTo(null);
+					jd.setModal(true);
+					jd.setVisible(true);
+				}
+	        });	        
+	        b2.addActionListener(new ActionListener(){
+				//单击输出执行的方法
+				public void actionPerformed(ActionEvent e) {
+					JDialog jd = new JDialog();
+					jd.setTitle("实验结果");
+					jd.setSize(300, 500);					
+					JTextArea jt = new JTextArea();
+					jt.setLayout(null);
+					jt.setSize(300, 500);
+					for (bag.GradeFrame d :GradeFrame)
+					{
+						jt.append(d.toString()+"\r\n");
+					}
+					jd.add(jt);
+					jd.setLocationRelativeTo(null);
+					jd.setModal(true);
+					jd.setVisible(true);
+				}			
+			});	     
+	        b2.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+	        
+	        });
+	        
+	        p.add(b1);
+	        p.add(b2);
+	        p.add(b3);
+	        f.add(p, BorderLayout.SOUTH);
+	        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//界面关闭后程序结束	        
+	        f.setLocationRelativeTo(null);
+	        f.setVisible(true);
+	    }
+	}
