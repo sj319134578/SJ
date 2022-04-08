@@ -425,47 +425,7 @@ public class max_bag {
 
     }
     
-    class MaxValue {
-        public static int[] have = null;
-        public static int max_value = 0;
-    }
-
-    class Global {
-        public final static int M = 200;
-        public final static int T = 1000;
-        public final static double pc = 0.8;
-        public final static double pv = 0.05;
-    }
-
-    public class GasolvePackage {
-        private int package_rj = 0;
-        private int num = 0;
-        private int[] tiji = null;
-        private int[] value = null;
-        private int[][] zq = null;
-
-        public GasolvePackage(String profitString, String valueString, String valume) {
-            // try {
-            //  BufferedReader read = new BufferedReader(new InputStreamReader(new FileInputStream("./data/input.txt")));
-            String a = profitString;
-            String b = valueString;
-            package_rj = Integer.parseInt(valume);
-            //a = read.readLine();
-            tiji = strArr_to_intArr(a.split(","));
-            // b = read.readLine();
-            value = strArr_to_intArr(b.split(","));
-            num = value.length;
-            MaxValue.have = new int[Global.M];
-        }
-        private int[] strArr_to_intArr(String[] strArr) {
-            int size = strArr.length;
-            int[] int_arr = new int[size];
-            for (int i = 0; i < size; i++) {
-                int_arr[i] = Integer.valueOf(strArr[i].trim());
-            }
-            return int_arr;
-        }
-
+   
 
 
 }
